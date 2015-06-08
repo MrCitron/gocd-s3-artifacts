@@ -18,6 +18,7 @@ import java.util.List;
 
 public class S3PackageMaterialConfiguration implements PackageMaterialConfiguration {
     public static String S3_BUCKET = "S3_BUCKET";
+    public static String PATH_NAME = "PATH_NAME";
     public static String PIPELINE_NAME = "PIPELINE_NAME";
     public static String STAGE_NAME = "STAGE_NAME";
     public static String JOB_NAME = "JOB_NAME";
@@ -28,9 +29,10 @@ public class S3PackageMaterialConfiguration implements PackageMaterialConfigurat
     }};
 
     public static List<Config> packageConfigs = new ArrayList<Config>(){{
-        add(new Config(PIPELINE_NAME, "Pipeline Name", 0));
-        add(new Config(STAGE_NAME, "Stage Name", 1));
-        add(new Config(JOB_NAME, "Job Name", 2));
+        add(new Config(PATH_NAME, "Path", 0, false));
+        add(new Config(PIPELINE_NAME, "Pipeline Name", 1, false));
+        add(new Config(STAGE_NAME, "Stage Name", 2, false));
+        add(new Config(JOB_NAME, "Job Name", 3, false));
     }};
 
 

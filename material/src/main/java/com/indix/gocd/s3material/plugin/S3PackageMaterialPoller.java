@@ -54,7 +54,7 @@ public class S3PackageMaterialPoller implements PackageMaterialPoller {
         if(artifactStore.exists(s3Bucket, prefix))
             return ExecutionResult.success("Success");
         else
-            return ExecutionResult.failure(String.format("Couldn't find artifact at [%s]", prefix));
+            return ExecutionResult.failure(String.format("Couldn't find artifact at [%s/%s]", s3Bucket, prefix));
     }
 
     private static AmazonS3Client s3Client() {
@@ -68,9 +68,16 @@ public class S3PackageMaterialPoller implements PackageMaterialPoller {
     }
 
     private Artifact artifact(PackageConfiguration packageConfig) {
-        String pipelineName = packageConfig.get(S3PackageMaterialConfiguration.PIPELINE_NAME).getValue();
-        String stageName = packageConfig.get(S3PackageMaterialConfiguration.STAGE_NAME).getValue();
-        String jobName = packageConfig.get(S3PackageMaterialConfiguration.JOB_NAME).getValue();
-        return new Artifact(pipelineName, stageName,jobName);
+        Artifact ret;
+        String path = packageConfig.get(S3PackageMaterialConfiguration.PATH_NAME).getValue();
+        if (path != null) {
+            ret = new Artifact(path);
+        } else {
+            String pipelineName = packageConfig.get(S3PackageMaterialConfiguration.PIPELINE_NAME).getValue();
+            String stageName = packageConfig.get(S3PackageMaterialConfiguration.STAGE_NAME).getValue();
+            String jobName = packageConfig.get(S3PackageMaterialConfiguration.JOB_NAME).getValue();
+            ret = new Artifact(pipelineName, stageName,jobName);
+        }
+        return ret;
     }
 }

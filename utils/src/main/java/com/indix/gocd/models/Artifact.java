@@ -1,10 +1,15 @@
 package com.indix.gocd.models;
 
 public class Artifact {
+    String path;
     String pipelineName;
     String stageName;
     String jobName;
     Revision revision;
+
+    public Artifact(String path) {
+        this.path = path;
+    }
 
     public Artifact(String pipelineName, String stageName, String jobName) {
         this.pipelineName = pipelineName;
@@ -25,12 +30,12 @@ public class Artifact {
     }
 
     public String prefix(){
-        return String.format("%s/%s/%s/", pipelineName, stageName, jobName);
+        return path != null ? path : String.format("%s/%s/%s/", pipelineName, stageName, jobName);
     }
 
     public String prefixWithRevision(){
         if(revision != null)
-            return String.format("%s/%s/%s/%s/", pipelineName, stageName, jobName, revision.getRevision());
+            return path != null ? path + revision.getRevision() : String.format("%s/%s/%s/%s/", pipelineName, stageName, jobName, revision.getRevision());
         else
             return prefix();
     }

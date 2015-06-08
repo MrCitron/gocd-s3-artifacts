@@ -37,7 +37,8 @@ class S3PackageMaterialConfigurationSpec extends FlatSpec {
   it should "return package configuration" in {
     val packageConfig = new S3PackageMaterialConfiguration().getPackageConfiguration
     val keys = packageConfig.list().asScala.map(_.asInstanceOf[PackageMaterialProperty]).map(_.getKey)
-    keys.length should be(3)
+    keys.length should be(4)
+    keys should contain (S3PackageMaterialConfiguration.PATH_NAME)
     keys should contain (S3PackageMaterialConfiguration.PIPELINE_NAME)
     keys should contain (S3PackageMaterialConfiguration.JOB_NAME)
     keys should contain (S3PackageMaterialConfiguration.STAGE_NAME)

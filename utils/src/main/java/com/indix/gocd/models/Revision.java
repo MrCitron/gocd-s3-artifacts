@@ -1,23 +1,38 @@
 package com.indix.gocd.models;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Revision implements Comparable {
     private String revision;
     private String[] parts;
-    private Integer major;
-    private Integer minor;
-    private Integer patch;
+    private String major;
+    private String minor;
+    private String patch;
 
     public Revision(String revision) {
         this.revision = revision;
         this.parts = revision.split("\\.");
-        this.major = Integer.valueOf(parts[0]);
-        this.minor = Integer.valueOf(parts[1]);
+        this.major = parts[0];
+        this.minor = parts[1];
         if (parts.length == 3) {
-            this.patch = Integer.valueOf(parts[2]);
+            this.patch = parts[2];
         } else {
-            this.patch = 0;
+            this.patch = "0";
         }
     }
+
+    public Revision(String key, String patternString) {
+        this.revision = key;
+        Pattern pattern = Pattern.compile(patternString);
+        Matcher m = pattern.matcher(key);
+        if (m.matches()) {
+            this.major = m.group("major");
+            this.minor = m.group("minor");
+            this.patch = m.group("patch");
+        }
+    }
+
 
     public static Revision base() {
         return new Revision("0.0.0");

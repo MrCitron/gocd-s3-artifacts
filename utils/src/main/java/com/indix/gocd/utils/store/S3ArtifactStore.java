@@ -93,7 +93,7 @@ public class S3ArtifactStore {
                 .withDelimiter("/");
         try {
             ObjectListing objectListing = client.listObjects(listObjectsRequest);
-            return objectListing != null && objectListing.getCommonPrefixes().size() > 0;
+            return objectListing != null && (objectListing.getObjectSummaries().size() > 0 || objectListing.getCommonPrefixes().size() > 0);
         } catch(Exception ex) {
             return false;
         }
@@ -103,6 +103,7 @@ public class S3ArtifactStore {
         return client.getObjectMetadata(bucket, prefix).getUserMetadata().containsKey(ResponseMetadataConstants.COMPLETED);
     }
     private Revision mostRecentRevision(final AmazonS3Client client, ObjectListing listing) {
+        /*
         List<String> prefixes = Lists.filter(listing.getCommonPrefixes(), new Functions.Predicate<String>() {
             @Override
             public Boolean execute(String input) {
@@ -114,8 +115,17 @@ public class S3ArtifactStore {
             @Override
             public Revision apply(String prefix) {
                 String[] parts = prefix.split("/");
-                String last = parts[parts.length-1];
+                String last = parts[parts.length - 1];
                 return new Revision(last);
+            }
+        });*/
+
+        List<Revision> revisions = Lists.map(listing.getObjectSummaries(), new Function<S3ObjectSummary, Revision>() {
+            @Override
+            public Revision apply(S3ObjectSummary summary) {
+                String[] parts = summary.getKey().split("/");
+                String last = parts[parts.length-1];
+                return new Revision(last, ".*(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+\\.\\d+)\\.zip");
             }
         });
 
